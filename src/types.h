@@ -27,6 +27,9 @@ typedef enum {
     TOUCH_DEBUG_GET = 0x07,
     TOUCH_DEBUG_CLEAR = 0x08,
     TOUCH_DEBUG_READ_SENSI = 0x09,
+    DRAW_RECT = 0x0A,
+    INFO = 0x0B,
+    QUIT_APP = 0xFF,
 } command_e;
 
 /**

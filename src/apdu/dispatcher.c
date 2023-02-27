@@ -30,10 +30,18 @@
 #include "../handler/get_public_key.h"
 #include "../handler/sign_tx.h"
 
+#include "nbgl_use_case.h"
+#include "nbgl_layout.h"
+
+// #include "menu.h"
+
 extern uint8_t touch_debug[NB_TOUCH_DEBUG*TOUCH_DEBUG_LEN];
 extern uint16_t point_idx;
 extern uint8_t last_touch_state;
 extern uint16_t G_ticks;
+
+extern uint8_t step;
+extern bool drawRect;
 
 int apdu_dispatcher(const command_t *cmd) {
     if (cmd->cla != CLA) {
@@ -105,6 +113,44 @@ int apdu_dispatcher(const command_t *cmd) {
             buf.size = sizeof(sensi_buffer);
             buf.offset = 0;
             return io_send_response(&buf, SW_OK);
+        case INFO:
+            drawRect = false;
+            uint8_t step = cmd->p1;
+            nbgl_test_info(step);
+            return io_send_sw(SW_OK);
+        case DRAW_RECT:
+            if (!drawRect) {
+                return io_send_sw(SW_WRONG_UX_STEP);
+            }
+            else {
+                if ((cmd->p1 != 0x00) || (cmd->p2 != 0x00)) {
+                    return io_send_sw(SW_WRONG_P1P2);
+                }
+                if (cmd->lc != 0x08) {
+                    return io_send_sw(SW_WRONG_DATA_LENGTH);
+                }
+                nbgl_fullScreenClear(WHITE, false);
+                nbgl_area_t rect_area = {
+                    .x0 = ((cmd->data[0])<<8) | cmd->data[1],
+                    .y0 = ((cmd->data[2])<<8) | cmd->data[3],
+                    .width = ((cmd->data[4])<<8) | cmd->data[5],
+                    .height = ((cmd->data[6])<<8) | cmd->data[7],
+                    // .bpp = NBGL_BPP_1,
+                    .backgroundColor = BLACK,
+                };
+                nbgl_frontDrawRect(&rect_area);
+                rect_area.x0 = 0,
+                rect_area.y0 = 0,
+                rect_area.width = SCREEN_WIDTH,
+                rect_area.height = SCREEN_HEIGHT,
+                rect_area.backgroundColor = WHITE,
+                nbgl_frontRefreshArea(&rect_area, FULL_COLOR_REFRESH);
+                return io_send_sw(SW_OK);
+            }
+
+        case QUIT_APP:
+            app_exit();
+            return io_send_sw(SW_OK);
         default:
             return io_send_sw(SW_INS_NOT_SUPPORTED);
     }

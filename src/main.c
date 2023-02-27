@@ -144,7 +144,8 @@ __attribute__((section(".boot"))) int main() {
                 USB_power(1);
 
                 // ui_menu_main();
-                ui_hold_test();
+                // ui_hold_test();
+                nbgl_fullScreenClear(WHITE, true);
 
 #ifdef HAVE_BLE
                 BLE_power(0, NULL);

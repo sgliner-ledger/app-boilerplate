@@ -60,3 +60,5 @@
  * Status word for signature fail.
  */
 #define SW_SIGNATURE_FAIL 0xB008
+
+#define SW_WRONG_UX_STEP 0x0001
