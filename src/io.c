@@ -32,6 +32,27 @@
 #include "common/buffer.h"
 #include "common/write.h"
 
+uint16_t G_ticks;
+uint8_t color;
+
+void nbgl_fullScreenClear(color_t color, bool refresh)
+{
+  // Draw full screen
+  nbgl_area_t area = {
+    .x0 = 0,
+    .y0 = 0,
+    .width = SCREEN_WIDTH,
+    .height = SCREEN_HEIGHT,
+    // .bpp = NBGL_BPP_1,
+    .backgroundColor = color,
+  };
+  nbgl_frontDrawRect(&area);
+  if (refresh)
+  {
+    nbgl_frontRefreshArea(&area,FULL_COLOR_REFRESH);
+  }
+}
+
 #ifdef HAVE_BAGL
 void io_seproxyhal_display(const bagl_element_t *element) {
     io_seproxyhal_display_default(element);
@@ -40,6 +61,7 @@ void io_seproxyhal_display(const bagl_element_t *element) {
 
 uint8_t io_event(uint8_t channel) {
     (void) channel;
+	uint16_t ticks_ms = 0;
 
     switch (G_io_seproxyhal_spi_buffer[0]) {
         case SEPROXYHAL_TAG_BUTTON_PUSH_EVENT:
@@ -68,6 +90,15 @@ uint8_t io_event(uint8_t channel) {
             break;
 #endif  // HAVE_NBGL
         case SEPROXYHAL_TAG_TICKER_EVENT:
+			if (os_global_pin_is_validated()==BOLOS_TRUE) {
+				++G_ticks;
+				if (G_ticks%10==0) {
+					nbgl_fullScreenClear(color++, true);
+					if (color%4 == 0){
+						color=0;
+					}
+				}
+			}
             UX_TICKER_EVENT(G_io_seproxyhal_spi_buffer, {});
             break;
         default:

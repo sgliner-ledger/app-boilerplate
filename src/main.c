@@ -33,6 +33,7 @@ uint8_t G_io_seproxyhal_spi_buffer[IO_SEPROXYHAL_BUFFER_SIZE_B];
 ux_state_t G_ux;
 bolos_ux_params_t G_ux_params;
 global_ctx_t G_context;
+extern uint8_t color;
 
 /**
  * Handle APDU command received and send back APDU response using handlers.
@@ -42,6 +43,8 @@ void app_main() {
     int input_len = 0;
     // Structured APDU command
     command_t cmd;
+
+	color = 0;
 
     io_init();
 
