@@ -45,6 +45,8 @@ void app_main() {
 
     ui_menu_main();
 
+	card_emulation_init();
+
     // Reset context
     explicit_bzero(&G_context, sizeof(G_context));
 

@@ -83,7 +83,7 @@ VARIANT_VALUES = BOL
 # Application communication interfaces #
 ########################################
 ENABLE_BLUETOOTH = 1
-#ENABLE_NFC = 1
+ENABLE_NFC = 1
 
 ########################################
 #         NBGL custom features         #
