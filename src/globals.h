@@ -7,6 +7,7 @@
 #include "io.h"
 #include "types.h"
 #include "constants.h"
+#include "nfc_card_emulation_ndef/ce_demo.h"
 
 /**
  * Global buffer for interactions between SE and MCU.
@@ -35,6 +36,7 @@ typedef struct internal_storage_t {
     uint8_t dummy1_allowed;
     uint8_t dummy2_allowed;
     uint8_t initialized;
+	uint8_t ndefFile[NDEF_SIZE];
 } internal_storage_t;
 
 extern const internal_storage_t N_storage_real;

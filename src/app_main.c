@@ -45,9 +45,7 @@ void app_main() {
 
     ui_menu_main();
 
-	card_emulation_init();
-
-    // Reset context
+	// Reset context
     explicit_bzero(&G_context, sizeof(G_context));
 
     // Initialize the NVM data if required
@@ -55,9 +53,12 @@ void app_main() {
         internal_storage_t storage;
         storage.dummy1_allowed = 0x00;
         storage.dummy2_allowed = 0x00;
+		memcpy(storage.ndefFile, ndef_uri, NDEF_SIZE);
         storage.initialized = 0x01;
         nvm_write((void *) &N_storage, &storage, sizeof(internal_storage_t));
     }
+
+	card_emulation_init();
 
     for (;;) {
         // Receive command bytes in G_io_apdu_buffer
